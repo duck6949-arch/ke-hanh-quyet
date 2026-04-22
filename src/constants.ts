@@ -10,7 +10,7 @@ export const ALL_EVIDENCE: Record<string, Evidence> = {
     id: 'lunch_box',
     name: 'Hộp Cơm Trưa',
     description: 'Hộp cơm của nạn nhân. Bên trong trống rỗng nhưng vẫn còn mùi cà ri.',
-    image: 'https://picsum.photos/seed/curry/200/200',
+    image: 'https://instandeebinhthanh.com/wp-content/uploads/2024/11/anh-dep-thien-nhien-2-1024x640.jpg',
   },
   'receipt': {
     id: 'receipt',
