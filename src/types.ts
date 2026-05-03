@@ -24,6 +24,7 @@ export interface DialogueNode {
     text: string;
     nextId: string;
     requiredEvidence?: string;
+    action?: 'OPEN_DOSSIER';
   }[];
   isStatement?: boolean; // For cross-examination
   correctEvidence?: string; // Evidence to present here to advance

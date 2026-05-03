@@ -108,7 +108,7 @@ export default function App() {
   const [gamePhase, setGamePhase] = useState<'MENU' | 'PLAYING'>('MENU');
   const [gameState, setGameState] = useState<GameState>({
     currentDialogueId: 'intro_1',
-    inventory: ['lunch_box', 'receipt'], // Initial evidence
+    inventory: ['water_report', 'dolphin_report', 'petition', 'payroll_ledger', 'chemical_receipt', 'fish_license'], 
     isExamining: false,
     isCourtroom: true,
     penalties: 0,
@@ -140,7 +140,7 @@ export default function App() {
   const restartGame = () => {
     setGameState({
       currentDialogueId: 'intro_1',
-      inventory: ['lunch_box', 'receipt'],
+      inventory: ['water_report', 'dolphin_report', 'petition', 'payroll_ledger', 'chemical_receipt', 'fish_license'],
       isExamining: false,
       isCourtroom: true,
       penalties: 0,
@@ -186,12 +186,12 @@ export default function App() {
 
   if (gamePhase === 'MENU') {
     return (
-      <div className="relative w-full h-screen overflow-hidden bg-[#050505] flex items-center justify-center font-sans">
+      <div className="relative w-full h-screen overflow-hidden bg-[#050505] flex items-end justify-center font-sans pb-20">
         {/* Background Visual for Menu */}
         <div className="absolute inset-0 opacity-40 grayscale">
           <div 
             className="w-full h-full bg-cover bg-center"
-            style={{ backgroundImage: 'url(https://picsum.photos/seed/lawyer/1920/1080)' }}
+            style={{ backgroundImage: 'url(https://i.postimg.cc/nV5M3n82/Chat-GPT-Image-00-47-19-4-thg-5-2026.png)' }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black" />
         </div>
@@ -213,18 +213,18 @@ export default function App() {
 
           {/* Main Title */}
           <h1 className="flex items-center justify-center gap-x-3 md:gap-x-5 font-[1000] italic uppercase mb-16 select-none">
-            {/* "KẺ" on the left, sized to match the two lines on the right */}
+            {/* "TÒA" on the left */}
             <span className="text-white text-[100px] md:text-[180px] lg:text-[240px] leading-[0.8] [text-shadow:12px_12px_0_#e74c3c]">
-              KẺ
+              TÒA
             </span>
             
-            {/* "HÀNH QUYẾT" split into two lines on the right */}
+            {/* "XÉT XỬ" on the right */}
             <div className="flex flex-col items-start leading-[0.85]">
               <span className="text-amber-500 text-[50px] md:text-[90px] lg:text-[120px] [text-shadow:8px_8px_0_#000] tracking-tighter">
-                HÀNH
+                XÉT
               </span>
               <span className="text-amber-500 text-[50px] md:text-[90px] lg:text-[120px] [text-shadow:8px_8px_0_#000] tracking-tighter">
-                QUYẾT
+                XỬ
               </span>
             </div>
           </h1>
@@ -307,21 +307,31 @@ export default function App() {
         )}
       </div>
 
-      {/* HUD: Penalties at Top Right */}
+      {/* HUD: Avatar and Penalties at Top Right */}
       <div className="absolute top-8 right-8 z-30 pointer-events-none">
-        <div className="flex gap-1.5 bg-black/60 p-2.5 rounded-lg border border-white/10 backdrop-blur-md shadow-2xl pointer-events-auto">
-           {[...Array(5)].map((_, i) => (
-             <motion.div 
-               key={i}
-               initial={false}
-               animate={{ 
-                 scale: i < gameState.penalties ? [1, 1.4, 1] : 1,
-                 opacity: i < gameState.penalties ? 0.2 : 1 
-               }}
-               className={`w-4 h-4 rounded-sm rotate-45 border ${i < gameState.penalties ? 'bg-red-600/20 border-red-500/20' : 'bg-red-500 border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.6)]'}`}
-             />
-           ))}
-        </div>
+        {/* Character Avatar Box */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-32 h-32 md:w-44 md:h-44 bg-black/80 border-4 border-[#d4af37] rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.8)] backdrop-blur-md pointer-events-auto relative"
+        >
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentDialogue.characterImage}
+              initial={{ opacity: 0, scale: 1.1, filter: 'brightness(0.5)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'brightness(1)' }}
+              exit={{ opacity: 0, scale: 0.9, filter: 'brightness(0.5)' }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              src={currentDialogue.characterImage}
+              alt="Character Avatar"
+              className="w-full h-full object-cover"
+            />
+          </AnimatePresence>
+          
+          {/* Subtle Scanline Overlay for a technical/court look */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_2px,3px_100%] pointer-events-none opacity-20" />
+          <div className="absolute inset-0 border border-white/5 pointer-events-none" />
+        </motion.div>
       </div>
 
       {/* Dossier Button: Bottom Right */}
@@ -380,6 +390,10 @@ export default function App() {
                 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => {
+                  if (choice.action === 'OPEN_DOSSIER') {
+                    setShowEvidence(true);
+                  }
+
                   if (choice.nextId === 'intro_1') {
                     restartGame();
                   } else if (choice.nextId === 'MENU') {
@@ -445,6 +459,7 @@ export default function App() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-6">
                   {gameState.inventory.map((eid, idx) => {
                     const item = ALL_EVIDENCE[eid];
+                    if (!item) return null;
                     const isSelected = selectedEvidenceId === eid;
 
                     return (
@@ -494,8 +509,8 @@ export default function App() {
                     >
                       <div className="w-full aspect-square rounded-3xl overflow-hidden border-2 border-amber-500/30 bg-black mb-8 shadow-2xl relative">
                         <img 
-                          src={ALL_EVIDENCE[selectedEvidenceId].image} 
-                          alt={ALL_EVIDENCE[selectedEvidenceId].name} 
+                          src={ALL_EVIDENCE[selectedEvidenceId]?.image} 
+                          alt={ALL_EVIDENCE[selectedEvidenceId]?.name} 
                           className="w-full h-full object-cover" 
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
@@ -505,13 +520,13 @@ export default function App() {
                       </div>
 
                       <h3 className="text-3xl font-[1000] text-white italic uppercase leading-none mb-6 [text-shadow:4px_4px_0_#e74c3c]">
-                        {ALL_EVIDENCE[selectedEvidenceId].name}
+                        {ALL_EVIDENCE[selectedEvidenceId]?.name}
                       </h3>
 
                       <div className="flex gap-4 mb-8">
                         <div className="w-1 bg-amber-500 h-full rounded-full" />
                         <p className="text-zinc-400 text-sm italic font-medium leading-relaxed">
-                          {ALL_EVIDENCE[selectedEvidenceId].description}
+                          {ALL_EVIDENCE[selectedEvidenceId]?.description}
                         </p>
                       </div>
 
